@@ -1,0 +1,1075 @@
+% ============================================================
+%  Apprendre Go : Pourquoi ? Pour Quoi Faire ?
+%  Auteur  : Axel Konan
+%  Moteur  : pdflatex -shell-escape formation-go.tex (x2)
+% ============================================================
+\documentclass[11pt,a4paper,openany]{book}
+
+% --- Encodage ------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{microtype} % desactive pour compat
+
+% --- Couleurs ------------------------------------------------
+\usepackage[dvipsnames,svgnames,x11names]{xcolor}
+\definecolor{GoBlue}      {HTML}{00ACD7}
+\definecolor{GoDark}      {HTML}{0D1B2A}
+\definecolor{GoAccent}    {HTML}{FF6D00}
+\definecolor{GoLight}     {HTML}{E8F7FB}
+\definecolor{GoGrey}      {HTML}{546E7A}
+\definecolor{GoLightGrey} {HTML}{F4F7FB}
+\definecolor{CodeBg}      {HTML}{1E2B38}
+\definecolor{CodeFg}      {HTML}{CDD6F4}
+\definecolor{GreenCode}   {HTML}{2ECC71}
+\definecolor{OrangeWarn}  {HTML}{F39C12}
+
+% --- Geometrie -----------------------------------------------
+\usepackage[a4paper,top=24mm,bottom=24mm,
+            inner=28mm,outer=22mm,
+            headsep=8mm,footskip=12mm]{geometry}
+
+% --- TikZ ---------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning,calc,decorations.pathreplacing}
+
+% --- En-tetes et pieds de page ------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\small\color{GoGrey}\leftmark}
+\fancyhead[RO]{\small\color{GoGrey}\rightmark}
+\fancyfoot[LE,RO]{\small\color{GoGrey}\thepage}
+\fancyfoot[CE,CO]{\small\color{GoBlue}%
+  Apprendre Go : Pourquoi~? Pour Quoi Faire~?}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% --- Titres -------------------------------------------------
+\usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\color{GoDark}}
+  {\begin{tikzpicture}
+     \fill[GoBlue](0,0) rectangle (\textwidth,1cm);
+     \node[anchor=east,text=white,font=\large\bfseries]
+       at (\textwidth-5mm,0.5cm)
+       {\chaptertitlename\ \thechapter};
+   \end{tikzpicture}}
+  {4pt}
+  {\LARGE\bfseries\color{GoDark}}
+  [\vspace{1mm}{\color{GoBlue}\hrule height 1.5pt}\vspace{3mm}]
+
+\titleformat{\section}
+  {\large\bfseries\color{GoDark}}
+  {\color{GoBlue}\thesection}{0.8em}{}
+  [\vspace{0.5mm}{\color{GoLightGrey}\hrule height 2pt}\vspace{1mm}]
+
+\titleformat{\subsection}
+  {\normalsize\bfseries\color{GoDark}}
+  {\color{GoAccent}\thesubsection}{0.8em}{}
+
+\titlespacing*{\chapter}   {0pt}{0pt}{14pt}
+\titlespacing*{\section}   {0pt}{12pt}{5pt}
+\titlespacing*{\subsection}{0pt}{8pt}{3pt}
+
+% --- Table des matieres -------------------------------------
+\usepackage[titles]{tocloft}
+\renewcommand{\cftchapfont}{\bfseries\color{GoDark}}
+\renewcommand{\cftsecfont}{\color{GoGrey}}
+\renewcommand{\cftchappagefont}{\bfseries\color{GoBlue}}
+\renewcommand{\cftsecpagefont}{\color{GoGrey}}
+\setlength{\cftbeforechapskip}{4pt}
+
+% --- Boites tcolorbox ----------------------------------------
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+\newtcolorbox{boiteConseil}{
+  enhanced,breakable,
+  colback=GoLight,colframe=GoBlue,
+  leftrule=4pt,toprule=0pt,bottomrule=0pt,rightrule=0pt,
+  arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,
+  title={\small\bfseries Astuce},
+  fonttitle=\color{white},
+  attach boxed title to top left={yshift=-2.5mm,xshift=4mm},
+  boxed title style={colback=GoBlue,colframe=GoBlue,arc=2pt}}
+
+\newtcolorbox{boiteAttention}{
+  enhanced,breakable,
+  colback={orange!8},colframe=OrangeWarn,
+  leftrule=4pt,toprule=0pt,bottomrule=0pt,rightrule=0pt,
+  arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,
+  title={\small\bfseries Attention},
+  fonttitle=\color{white},
+  attach boxed title to top left={yshift=-2.5mm,xshift=4mm},
+  boxed title style={colback=OrangeWarn,colframe=OrangeWarn,arc=2pt}}
+
+\newtcolorbox{boiteZoom}[1]{
+  enhanced,breakable,
+  colback={GoGrey!8},colframe=GoGrey,
+  leftrule=4pt,toprule=0pt,bottomrule=0pt,rightrule=0pt,
+  arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,
+  title={\small\bfseries Zoom profil~--- #1},
+  fonttitle=\color{white},
+  attach boxed title to top left={yshift=-2.5mm,xshift=4mm},
+  boxed title style={colback=GoGrey,colframe=GoGrey,arc=2pt}}
+
+\newtcolorbox{boiteProjet}[1]{
+  enhanced,breakable,
+  colback={GoAccent!7},colframe=GoAccent,
+  arc=4pt,left=8pt,right=8pt,top=5pt,bottom=5pt,
+  title={\small\bfseries Projet fil rouge~--- #1},
+  fonttitle=\color{white},
+  attach boxed title to top left={yshift=-2.5mm,xshift=6mm},
+  boxed title style={colback=GoAccent,colframe=GoAccent,arc=3pt}}
+
+\newtcolorbox{boiteCitation}{
+  enhanced,
+  colback=GoDark,colframe=GoDark,
+  arc=4pt,left=10pt,right=10pt,top=7pt,bottom=7pt,
+  fontupper=\normalsize\itshape\color{GoLight}}
+
+% --- Code listings -------------------------------------------
+\usepackage{listings}
+
+\lstdefinestyle{goStyle}{
+  backgroundcolor=\color{CodeBg},
+  basicstyle=\small\ttfamily\color{CodeFg},
+  keywordstyle=\color{GoBlue}\bfseries,
+  stringstyle=\color{GreenCode},
+  commentstyle=\color{GoGrey}\itshape,
+  numberstyle=\tiny\color{GoGrey},
+  numbers=left,numbersep=8pt,
+  breaklines=true,frame=none,
+  xleftmargin=14pt,xrightmargin=4pt,
+  tabsize=4,showstringspaces=false,
+  language=[Objective]C,
+  morekeywords={func,package,import,var,const,type,struct,
+    interface,map,chan,go,defer,select,range,fallthrough,
+    nil,true,false,iota,make,new,append,len,cap,close,
+    delete,copy,panic,recover,return,if,else,for,switch,
+    case,default,break,continue,goto}}
+
+\lstdefinestyle{bashStyle}{
+  backgroundcolor=\color{GoDark},
+  basicstyle=\small\ttfamily\color{GoLight},
+  numbers=none,breaklines=true,frame=none,
+  xleftmargin=10pt,showstringspaces=false}
+
+\lstset{style=goStyle,aboveskip=6pt,belowskip=6pt}
+
+\newcommand{\code}[1]{%
+  \colorbox{GoLightGrey}{\small\ttfamily\color{GoDark}#1}}
+
+% --- Tableaux ------------------------------------------------
+\usepackage{booktabs,tabularx,colortbl}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcommand{\tableauStyle}{%
+  \rowcolors{2}{GoLightGrey}{white}\arrayrulecolor{GoBlue}}
+
+% --- Listes --------------------------------------------------
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=3pt,
+  label={\color{GoBlue}\textbullet}}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2pt,topsep=3pt,
+  label={\color{GoBlue}\arabic*.}}
+
+% --- Liens et PDF --------------------------------------------
+\usepackage[colorlinks=true,linkcolor=GoBlue,urlcolor=GoAccent,
+  citecolor=GoGrey,
+  pdftitle={Apprendre Go : Pourquoi ? Pour Quoi Faire ?},
+  pdfauthor={Axel Konan},
+  pdfsubject={Formation Go complete -- 5 modules}]{hyperref}
+
+% --- Divers --------------------------------------------------
+\usepackage{graphicx,float,caption,setspace}
+\captionsetup{font=small,labelfont={bf,color=GoBlue},textfont=it}
+\setstretch{1.2}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+% --- Macros utilitaires --------------------------------------
+\newcommand{\moduleHeader}[3]{%
+  \vspace{4mm}%
+  \begin{tikzpicture}
+    \fill[#3](0,0) rectangle (\textwidth,0.9cm);
+    \node[anchor=west,text=white,font=\large\bfseries]
+      at (5mm,0.45cm) {MODULE #1};
+    \node[anchor=east,text=white,font=\normalsize]
+      at (\textwidth-5mm,0.45cm) {#2};
+  \end{tikzpicture}\vspace{5mm}}
+
+% --- Page de titre -------------------------------------------
+\newcommand{\faireTitre}{%
+\begin{titlepage}
+\begin{tikzpicture}[remember picture,overlay]
+  % Fond sombre
+  \fill[GoDark]
+    (current page.south west) rectangle (current page.north east);
+  % Bande haute bleue
+  \fill[GoBlue]
+    (current page.north west)
+    rectangle ([yshift=-1.4cm]current page.north east);
+  % Bande basse orange
+  \fill[GoAccent]
+    (current page.south west)
+    rectangle ([yshift=0.9cm]current page.south east);
+  % Cercle decoratif droit
+  \fill[GoBlue!30]
+    ([xshift=13cm,yshift=-5.5cm]current page.north west) circle (4cm);
+  \fill[GoDark]
+    ([xshift=13cm,yshift=-5.5cm]current page.north west) circle (2.6cm);
+  \node[text=GoBlue,font=\fontsize{52}{52}\selectfont\bfseries]
+    at ([xshift=13cm,yshift=-5.5cm]current page.north west) {Go};
+  % Titre
+  \node[anchor=west,text=white,
+    font=\fontsize{36}{42}\selectfont\bfseries,text width=9cm]
+    at ([xshift=1.5cm,yshift=-3cm]current page.north west)
+    {Apprendre Go :};
+  % Sous-titre
+  \node[anchor=west,text=GoBlue,
+    font=\fontsize{17}{22}\selectfont\bfseries,text width=9cm]
+    at ([xshift=1.5cm,yshift=-5.1cm]current page.north west)
+    {Mais Pourquoi ?\\[2mm]Et Pour Quoi Faire ?};
+  % Description
+  \node[anchor=west,text=GoGrey!80,
+    font=\fontsize{11}{15}\selectfont\itshape,text width=9cm]
+    at ([xshift=1.5cm,yshift=-7.1cm]current page.north west)
+    {De la philosophie du langage\\
+     a l'architecture de systemes distribues.\\[1mm]
+     5 modules $\cdot$ 13 chapitres $\cdot$ 2 projets fil rouge.};
+  % Separateur
+  \draw[GoBlue,line width=1.2pt]
+    ([xshift=1.5cm,yshift=-8.5cm]current page.north west) --
+    ([xshift=10.5cm,yshift=-8.5cm]current page.north west);
+  % Auteur
+  \node[anchor=west,text=white,
+    font=\fontsize{15}{15}\selectfont\bfseries]
+    at ([xshift=1.5cm,yshift=-9.4cm]current page.north west)
+    {Axel Konan};
+  \node[anchor=west,text=GoGrey!60,
+    font=\fontsize{10}{10}\selectfont]
+    at ([xshift=1.5cm,yshift=-10.3cm]current page.north west)
+    {Architecte Logiciel $\cdot$ Formateur $\cdot$ Vulgarisateur Technique};
+  % Badges modules
+  \foreach \xpos/\lbl/\col in {
+    1.5/Module 01/GoBlue,
+    4.2/Module 02/GoBlue!80,
+    6.9/Module 03/GoAccent,
+    9.6/Module 04/GoAccent!70,
+    12.3/Module 05/GoGrey}{
+    \fill[\col]
+      ([xshift=\xpos cm,yshift=4.8cm]current page.south west)
+      rectangle ([xshift=\xpos cm+2.4cm,yshift=5.5cm]current page.south west);
+    \node[text=white,font=\fontsize{7}{7}\selectfont\bfseries]
+      at ([xshift=\xpos cm+1.2cm,yshift=5.15cm]current page.south west) {\lbl};}
+  % Version
+  \node[anchor=east,text=GoGrey!40,font=\fontsize{8}{8}\selectfont]
+    at ([xshift=-1cm,yshift=1.4cm]current page.south east)
+    {v1.0 $\cdot$ \the\year{} $\cdot$ CC BY-NC-SA 4.0};
+\end{tikzpicture}
+\end{titlepage}}
+
+% ============================================================
+%  DEBUT DU DOCUMENT
+% ============================================================
+\begin{document}
+\faireTitre
+
+% --- Liminaires ----------------------------------------------
+\frontmatter
+\pagestyle{plain}
+
+\clearpage
+\vspace*{\fill}
+\begin{center}
+  {\Large\bfseries\color{GoDark}%
+    Apprendre Go : Mais Pourquoi ? Et Pour Quoi Faire ?}\\[5mm]
+  {\color{GoGrey}Formation complete~---
+    5 modules $\cdot$ 13 chapitres $\cdot$ 2 projets fil rouge}\\[8mm]
+  \begin{tabular}{rl}
+    \textbf{Auteur}  & Axel Konan \\
+    \textbf{Version} & 1.0 \\
+    \textbf{Annee}   & \the\year \\
+    \textbf{Depot GitHub} &
+      \href{https://github.com/votre-pseudo/formation-go}%
+           {github.com/votre-pseudo/formation-go} \\
+    \textbf{Licence} & Creative Commons CC BY-NC-SA 4.0 \\
+  \end{tabular}\\[8mm]
+  {\color{GoBlue}\hrule}\vspace{4mm}
+  {\small\color{GoGrey}
+    Ce document est distribue gratuitement.\\
+    Partagez-le et adaptez-le en citant l'auteur.}
+\end{center}
+\vspace*{\fill}
+
+\tableofcontents
+\clearpage
+
+% --- PREFACE -------------------------------------------------
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+\begin{boiteCitation}
+``La simplicite est la sophistication supreme.''\\
+\hfill --- Rob Pike, co-createur de Go
+\end{boiteCitation}
+
+\vspace{4mm}
+
+Il existe des dizaines de ressources pour apprendre Go.
+Alors pourquoi celle-ci ?
+
+Parce que toutes ces ressources repondent a la question \textbf{Comment~?}
+et presque aucune ne repond d'abord a la question \textbf{Pourquoi~?}
+
+Sans le Pourquoi, le Comment ne tient pas. On apprend des syntaxes
+qu'on oublie. On abandonne au troisieme chapitre parce qu'on ne voit
+pas ou ca mene.
+
+\begin{boiteCitation}
+Moins de magie. Plus de clarte.\\
+Des systemes qui tiennent debout.
+\end{boiteCitation}
+
+\medskip
+Chaque chapitre suit toujours le meme schema~:
+\begin{enumerate}
+  \item \textbf{Le probleme}~--- La frustration concrete que ce chapitre resout
+  \item \textbf{L'intuition}~--- L'analogie ou l'image mentale avant le code
+  \item \textbf{La solution Go}~--- Le code commente, explique ligne par ligne
+  \item \textbf{Ce qu'il faut retenir}~--- L'essentiel en 3 points maximum
+  \item \textbf{Pour aller plus loin}~--- Des ressources optionnelles
+\end{enumerate}
+
+% --- INTRODUCTION --------------------------------------------
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+\begin{boiteProjet}{gowatch --- Outil CLI de monitoring systeme}
+Un binaire unique, concurrent, sans dependances externes.
+Du simple affichage du Module~01 jusqu'au scanner reseau securise
+du Module~05. Un seul executable, zero dependance.
+\end{boiteProjet}
+
+\begin{boiteProjet}{gohub --- Dashboard API REST}
+Une API HTTP testee, dockerisee, en image Docker de moins de 10~Mo.
+Introduite au Module~04, elle s'appuie sur tout ce qu'on a construit avant.
+\end{boiteProjet}
+
+\section*{Parcours recommandes par profil}
+
+\begin{center}
+\tableauStyle
+\begin{tabularx}{\textwidth}{>{\bfseries}l L l}
+\toprule
+\rowcolor{GoDark}
+\color{white}Profil &
+\color{white}Objectif &
+\color{white}Parcours \\
+\midrule
+Backend / Fullstack & API performante en production    & 01 a 04 \\
+DevOps / Cloud      & Outils CLI + Cloud Native        & 01 a 05 \\
+Python / JS         & Memoire + concurrence            & 01 a 04 \\
+Low-Level / Secu    & Scanner reseau + cryptographie   & 01, 02, 03, 05 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================
+%  CORPS
+% ============================================================
+\mainmatter
+\pagestyle{fancy}
+
+% ============================================================
+\moduleHeader{01}{L'Eveil --- Pourquoi Go existe}{GoBlue}
+% ============================================================
+
+\chapter{Le syndrome de la complexite}
+
+\begin{boiteCitation}
+``Complexity is the enemy of reliability.''
+\hfill --- Rob Pike
+\end{boiteCitation}
+
+\section{Le probleme}
+
+Nous sommes en 2007, dans les bureaux de Google. Trois langages dominent~:
+
+\begin{itemize}
+  \item \textbf{C++}~: rapide, mais compile en 45 minutes. Gestion memoire dangereuse.
+  \item \textbf{Java}~: accessible, mais verbeux, lent au demarrage, gourmand en RAM.
+  \item \textbf{Python}~: elegant, mais s'effondre sous la charge concurrente.
+\end{itemize}
+
+\textbf{Robert Griesemer, Rob Pike et Ken Thompson} decident de creer Go.
+Pas pour le plaisir de l'exercice~--- pour resoudre des problemes reels
+a grande echelle.
+
+\section{Les 3 piliers fondateurs}
+
+\subsection{Pilier 1 --- La Simplicite}
+
+Pas de classes. Pas d'heritage. Pas de surcharge d'operateurs.
+Ce n'est pas un manque~--- c'est une decision deliberee.
+
+\begin{boiteConseil}
+\code{gofmt} formate automatiquement votre code selon les conventions
+officielles. Pas de debat tabs vs espaces. Pas de style d'equipe a negocier.
+\code{gofmt} a tranche une fois pour toutes.
+\end{boiteConseil}
+
+\subsection{Pilier 2 --- L'Efficacite}
+
+Un \textbf{binaire natif unique}, sans dependance externe. Demarre en
+millisecondes. Une fraction de la memoire d'une application Java equivalente.
+La compilation d'un projet moyen prend quelques \textbf{secondes}, pas des minutes.
+
+\subsection{Pilier 3 --- La Concurrence Native}
+
+\begin{boiteCitation}
+``Don't communicate by sharing memory;\\
+share memory by communicating.''
+\hfill --- Rob Pike
+\end{boiteCitation}
+
+\section{Comparaison honnete des langages}
+
+\begin{center}
+\tableauStyle
+\begin{tabularx}{\textwidth}{L C C C C C}
+\toprule
+\rowcolor{GoDark}
+\color{white}Critere &
+\color{white}Go &
+\color{white}Python &
+\color{white}Java &
+\color{white}C++ &
+\color{white}Rust \\
+\midrule
+Vitesse execution      & 4/5 & 2/5 & 3/5 & 5/5 & 5/5 \\
+Vitesse compilation    & 5/5 & N/A & 2/5 & 1/5 & 2/5 \\
+Concurrence native     & 5/5 & 2/5 & 3/5 & 2/5 & 4/5 \\
+Facilite apprentissage & 4/5 & 5/5 & 3/5 & 1/5 & 2/5 \\
+Deploiement binaire    & 5/5 & 2/5 & 2/5 & 4/5 & 5/5 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\chapter{La Zen Attitude du Gopher}
+
+\section{Installation en 3 commandes}
+
+\begin{lstlisting}[style=bashStyle]
+wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+go version   # go version go1.23.0 linux/amd64
+\end{lstlisting}
+
+\section{La toolchain integree}
+
+\begin{center}
+\tableauStyle
+\begin{tabularx}{\textwidth}{>{\ttfamily\small}l L}
+\toprule
+\rowcolor{GoDark}\color{white}Commande & \color{white}Usage \\
+\midrule
+go run main.go    & Compiler et executer (developpement) \\
+go build -o app . & Compiler en binaire (production) \\
+go test ./...     & Lancer tous les tests \\
+go fmt ./...      & Formatter le code automatiquement \\
+go vet ./...      & Analyser les erreurs logiques \\
+go mod tidy       & Nettoyer les dependances \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Premier programme --- analyse ligne par ligne}
+
+\begin{lstlisting}[style=goStyle]
+package main   // "main" = point d'entree du programme
+
+import "fmt"   // Import inutilise = erreur de compilation !
+
+func main() {  // Lance au demarrage du binaire
+    fmt.Println("Bonjour, monde.")
+}
+\end{lstlisting}
+
+\begin{boiteAttention}
+Si vous importez un package et ne l'utilisez pas, \textbf{Go refuse de compiler}.
+Frustrant au debut --- libérateur sur le long terme. Pas de code mort accumule.
+\end{boiteAttention}
+
+\begin{boiteProjet}{gowatch v0.1 --- Premier binaire autonome}
+\begin{lstlisting}[style=goStyle]
+package main
+import ("fmt"; "runtime")
+func main() {
+    fmt.Println("=== gowatch v0.1 ===")
+    fmt.Printf("Systeme  : %s/%s\n", runtime.GOOS, runtime.GOARCH)
+    fmt.Printf("Go       : %s\n",    runtime.Version())
+    fmt.Printf("CPU(s)   : %d\n",    runtime.NumCPU())
+    fmt.Printf("Goroutines : %d\n",  runtime.NumGoroutine())
+}
+// Compiler : go build -o gowatch .
+// Resultat : un seul fichier executable, zero dependance
+\end{lstlisting}
+\end{boiteProjet}
+
+% ============================================================
+\moduleHeader{02}{La Forge --- Les fondamentaux sans s'ennuyer}{GoBlue!80}
+% ============================================================
+
+\chapter{Les briques fondamentales}
+
+\section{Variables et inference de type}
+
+\begin{lstlisting}[style=goStyle]
+// Forme longue
+var nom  string = "Alice"
+var age  int    = 30
+
+// Forme courte -- idiomatique (a l'interieur des fonctions)
+nom := "Alice"   // Go infere le type string
+age := 30        // Go infere le type int
+
+// Regle d'or : toute variable declaree DOIT etre utilisee
+\end{lstlisting}
+
+\section{Slices --- La structure de donnees centrale}
+
+\begin{lstlisting}[style=goStyle]
+nombres := []int{10, 20, 30, 40, 50}
+nombres  = append(nombres, 60)            // Ajout dynamique
+
+for index, val := range nombres {         // Iteration
+    fmt.Printf("%d : %d\n", index, val)
+}
+
+donnees := make([]int, 0, 1000)           // Pre-allocation
+\end{lstlisting}
+
+\section{Maps --- Le dictionnaire haute performance}
+
+\begin{lstlisting}[style=goStyle]
+capitales := map[string]string{
+    "France":  "Paris",
+    "Senegal": "Dakar",
+}
+
+// Toujours verifier l'existence d'une cle !
+capitale, existe := capitales["Allemagne"]
+if existe {
+    fmt.Println("Capitale :", capitale)
+} else {
+    fmt.Println("Pays non trouve")
+}
+\end{lstlisting}
+
+\begin{boiteAttention}
+Acceder a une cle inexistante retourne la valeur zero du type silencieusement.
+Toujours utiliser la forme a deux retours~: \code{val, ok := maMap["cle"]}.
+\end{boiteAttention}
+
+\chapter{La logique sans fioritures}
+
+\section{La boucle \texttt{for} universelle}
+
+Go n'a qu'un seul mot-cle de boucle. Il couvre \textit{tous} les cas~:
+
+\begin{lstlisting}[style=goStyle]
+for i := 0; i < 5; i++ { }              // Compteur classique
+for compteur < 10 { compteur++ }        // Equivalent while
+for { if stop { break } }              // Boucle infinie
+
+for index, val := range maSlice { }   // Range slice
+for cle, val  := range maMap   { }    // Range map
+\end{lstlisting}
+
+\section{Gestion d'erreurs --- Le choix le plus controverse}
+
+En Go, les erreurs sont des \textbf{valeurs}, pas des exceptions~:
+
+\begin{lstlisting}[style=goStyle]
+// Une fonction qui peut echouer retourne DEUX valeurs
+fichier, err := os.Open("config.json")
+if err != nil {
+    return fmt.Errorf("impossible d'ouvrir : %w", err)
+}
+defer fichier.Close()  // Execute a la sortie de la fonction
+\end{lstlisting}
+
+\begin{boiteZoom}{Developpeurs Java / Python}
+Oui, \code{if err != nil} partout semble verbeux. Mais combien d'exceptions
+silencieuses attrapez-vous avec un \code{catch (Exception e) \{\}} vide ?
+Go rend l'ignorance d'une erreur visible et deliberee~--- pas accidentelle.
+\end{boiteZoom}
+
+\chapter{Composition vs Heritage}
+
+\section{Structs et methodes}
+
+\begin{lstlisting}[style=goStyle]
+type Metrique struct {
+    Nom    string   // Majuscule = exporte (public)
+    Valeur float64
+    Unite  string
+}
+
+// Methode avec recepteur par valeur (lecture seule)
+func (m Metrique) String() string {
+    return fmt.Sprintf("%s=%.2f%s", m.Nom, m.Valeur, m.Unite)
+}
+
+cpu := Metrique{Nom: "CPU", Valeur: 23.5, Unite: "%"}
+fmt.Println(cpu)  // CPU=23.50%  <- String() automatique
+\end{lstlisting}
+
+\section{Interfaces --- Duck Typing statique}
+
+\begin{lstlisting}[style=goStyle]
+// Definir une interface
+type Renderer interface {
+    Render(snap Snapshot) error
+}
+
+// TextRenderer l'implemente SANS "implements" explicite
+type TextRenderer struct{}
+func (r TextRenderer) Render(s Snapshot) error { return nil }
+
+// Si votre type a la methode Render() -> il implemente Renderer
+// Verifie a la compilation, pas a l'execution
+\end{lstlisting}
+
+% ============================================================
+\moduleHeader{03}{Le Super-Pouvoir --- La concurrence massive}{GoAccent}
+% ============================================================
+
+\chapter{Goroutines --- Le chaos ordonne}
+
+\begin{boiteCitation}
+Thread OS = un camion 38 tonnes.\\
+Goroutine = un coursier a velo.\\
+La ville prefere les velos.
+\end{boiteCitation}
+
+\section{Le modele M:N --- Pourquoi c'est si leger}
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw=GoBlue,fill=GoLight,rounded corners=3pt,
+    minimum width=1.8cm,minimum height=0.65cm,font=\small},
+  arr/.style={->,>=Stealth,thick,color=GoBlue}]
+\foreach \i/\x in {1/0,2/2.1,3/4.2,4/6.3,5/8.4}{
+  \node[box,fill=GoBlue!20] at (\x,3) {\small Go~\i};}
+\node[font=\small\color{GoGrey}] at (4.2,2.4)
+  {Goroutines multiplexees par le scheduler Go};
+\foreach \i/\x in {1/1.5,2/4.7,3/7.8}{
+  \node[box,fill=GoAccent!20,draw=GoAccent] at (\x,1.5)
+  {\small Thread~\i};}
+\node[font=\small\color{GoGrey}] at (4.2,0.9)
+  {Threads OS geres par le noyau};
+\node[box,fill=GoDark,text=white,minimum width=5cm,draw=GoDark]
+  at (4.2,0) {\small CPU~(coeurs physiques)};
+\foreach \gx/\tx in {0/1.5,2.1/1.5,4.2/4.7,6.3/7.8,8.4/7.8}{
+  \draw[arr](\gx,2.68)--(\tx,1.83);}
+\foreach \tx in {1.5,4.7,7.8}{
+  \draw[arr](\tx,1.18)--(4.2,0.33);}
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+  \item Goroutine~: \textbf{\raise.17ex\hbox{$\sim$}2~Ko} de memoire
+        vs 1--2~Mo pour un thread OS
+  \item Creer une goroutine~: quelques \textbf{microsecondes}
+  \item On peut en lancer \textbf{des centaines de milliers}
+        sur une machine ordinaire
+\end{itemize}
+
+\section{Lancer une goroutine}
+
+\begin{lstlisting}[style=goStyle]
+func main() {
+    go direBonjour("Alice")   // Non bloquant -- arriere-plan
+    go direBonjour("Bob")
+
+    // Piege classique : toujours passer i en parametre
+    for i := 0; i < 5; i++ {
+        go func(n int) { fmt.Println(n) }(i)  // Correct
+    }
+}
+\end{lstlisting}
+
+\begin{boiteAttention}
+\textbf{Le piege des closures en boucle}~:
+\begin{lstlisting}[style=goStyle]
+// MAUVAIS -- toutes les goroutines partagent la meme variable i
+for i := 0; i < 5; i++ {
+    go func() { fmt.Println(i) }()  // Peut afficher 5,5,5,5,5
+}
+\end{lstlisting}
+\end{boiteAttention}
+
+\chapter{Channels --- L'art de communiquer}
+
+\begin{lstlisting}[style=goStyle]
+ch := make(chan int)           // Channel unbuffered
+
+go func() { ch <- 42 }()      // Envoyer -- bloque jusqu'a reception
+valeur := <-ch                 // Recevoir -- bloque jusqu'a envoi
+
+// Buffered : n'attend pas immediatement un recepteur
+ch2 := make(chan string, 10)
+
+// Select : attendre le premier channel pret
+select {
+case msg := <-ch1:
+    fmt.Println("ch1:", msg)
+case msg := <-ch2:
+    fmt.Println("ch2:", msg)
+case <-time.After(5 * time.Second):
+    fmt.Println("timeout !")   // Pattern idiomatique
+}
+\end{lstlisting}
+
+\begin{boiteProjet}{gowatch v0.6 --- Collecte concurrente avec channels}
+\begin{lstlisting}[style=goStyle]
+func collecterSources(sources []Source) <-chan Metrique {
+    out := make(chan Metrique, len(sources))
+    var wg sync.WaitGroup
+
+    for _, src := range sources {
+        wg.Add(1)
+        s := src
+        go func() {
+            defer wg.Done()
+            val, err := s.Collecte()
+            out <- Metrique{Source: s.Nom, Valeur: val}
+            _ = err
+        }()
+    }
+
+    go func() { wg.Wait(); close(out) }()
+    return out  // Fan-out / Fan-in en 10 lignes
+}
+\end{lstlisting}
+\end{boiteProjet}
+
+\chapter{Patterns de concurrence avances}
+
+\begin{lstlisting}[style=goStyle]
+// WaitGroup : attendre un groupe de goroutines
+var wg sync.WaitGroup
+wg.Add(1)
+go func() { defer wg.Done() /* travail */ }()
+wg.Wait()   // Bloque jusqu'a ce que le compteur = 0
+
+// Mutex : proteger un etat partage
+var mu sync.Mutex
+mu.Lock()
+defer mu.Unlock()
+compteur++   // Acces exclusif garanti
+
+// Context : propager les annulations en cascade
+ctx, cancel := context.WithTimeout(
+    context.Background(), 5*time.Second)
+defer cancel()   // Toujours appeler cancel() !
+\end{lstlisting}
+
+% ============================================================
+\moduleHeader{04}{L'Architecte --- Systemes serieux en production}{GoAccent!80}
+% ============================================================
+
+\chapter{Cloud Native et Microservices}
+
+\section{Serveur HTTP sans framework}
+
+\begin{lstlisting}[style=goStyle]
+mux := http.NewServeMux()
+mux.HandleFunc("/health",      handleHealth)
+mux.HandleFunc("/api/metrics", handleMetrics)
+
+// TOUJOURS configurer les timeouts en production
+srv := &http.Server{
+    Addr:         ":8080",
+    Handler:      mux,
+    ReadTimeout:  5 * time.Second,
+    WriteTimeout: 10 * time.Second,
+    IdleTimeout:  120 * time.Second,
+}
+srv.ListenAndServe()
+\end{lstlisting}
+
+\begin{boiteConseil}
+\code{http.ListenAndServe} n'a pas de timeouts. Une connexion bloquee
+peut geler une goroutine indefiniment. Toujours utiliser
+\code{http.Server} avec des timeouts explicites.
+\end{boiteConseil}
+
+\section{Reponses JSON et middleware}
+
+\begin{lstlisting}[style=goStyle]
+// Helper JSON -- zero allocation intermediaire
+func jsonResponse(w http.ResponseWriter, code int, v any) {
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(code)
+    json.NewEncoder(w).Encode(v)  // Ecriture directe
+}
+
+// Middleware : Handler -> Handler
+func middlewareLogging(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        debut := time.Now()
+        next.ServeHTTP(w, r)
+        slog.Info("http", "method", r.Method,
+            "path", r.URL.Path, "dur", time.Since(debut))
+    })
+}
+\end{lstlisting}
+
+\chapter{Tooling et Qualite Production}
+
+\section{Table-Driven Tests --- L'idiome central de Go}
+
+\begin{lstlisting}[style=goStyle]
+func TestStore_Historique(t *testing.T) {
+    tests := []struct {
+        nom     string
+        inserts int
+        limite  int
+        attendu int
+    }{
+        {"limite < total", 10, 5,  5},
+        {"store vide",      0, 5,  0},
+        {"limite > total",  3, 10, 3},
+    }
+    for _, tc := range tests {
+        tc := tc   // Capture pour les sous-tests paralleles
+        t.Run(tc.nom, func(t *testing.T) {
+            s := store.New()
+            for i := 0; i < tc.inserts; i++ { s.Ajouter(Snapshot{}) }
+            if got := len(s.Historique(tc.limite)); got != tc.attendu {
+                t.Errorf("attendu %d, obtenu %d", tc.attendu, got)
+            }
+        })
+    }
+}
+\end{lstlisting}
+
+\chapter{Deploiement et DevOps}
+
+\section{Docker multi-stage~: de 800 Mo a 8 Mo}
+
+\begin{lstlisting}[style=bashStyle]
+# Stage 1 : Compiler dans une image complete
+FROM golang:1.23-alpine AS builder
+COPY . .
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /gohub .
+
+# Stage 2 : Image finale VIDE -- uniquement le binaire
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /gohub /gohub
+ENTRYPOINT ["/gohub"]
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashStyle]
+docker build -t gohub:latest .
+docker images gohub
+# REPOSITORY  TAG     SIZE
+# gohub       latest  8.2MB    <- Au lieu de 800+ Mo
+\end{lstlisting}
+
+% ============================================================
+\moduleHeader{05}{L'Homme de l'Ombre --- Outils systeme avances (Bonus)}{GoGrey}
+% ============================================================
+
+\chapter{Reseau et Securite Systeme}
+
+\section{Scanner de ports TCP concurrent}
+
+\begin{lstlisting}[style=goStyle]
+func Scan(ctx context.Context,
+          hote string, debut, fin, concurrence int) []Resultat {
+
+    resultats := make(chan Resultat, fin-debut+1)
+    semaphore  := make(chan struct{}, concurrence) // Rate limiting
+    var wg sync.WaitGroup
+
+    for port := debut; port <= fin; port++ {
+        wg.Add(1)
+        p := port
+        go func() {
+            defer wg.Done()
+            semaphore <- struct{}{}
+            defer func() { <-semaphore }()
+
+            portCtx, cancel :=
+                context.WithTimeout(ctx, 300*time.Millisecond)
+            defer cancel()
+            resultats <- testerPort(portCtx, hote, p)
+        }()
+    }
+    go func() { wg.Wait(); close(resultats) }()
+    return collecterResultats(resultats)
+}
+\end{lstlisting}
+
+\section{TLS natif et AES-GCM}
+
+\begin{lstlisting}[style=goStyle]
+// Serveur HTTPS sans OpenSSL
+srv := &http.Server{
+    TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12},
+}
+srv.ListenAndServeTLS("server.crt", "server.key")
+
+// Chiffrement AES-256-GCM (authentifie)
+func Chiffrer(texte, cle []byte) ([]byte, error) {
+    block, _ := aes.NewCipher(cle)  // 32 bytes = AES-256
+    gcm, _   := cipher.NewGCM(block)
+
+    nonce := make([]byte, gcm.NonceSize())
+    io.ReadFull(rand.Reader, nonce)  // Nonce unique par appel !
+
+    return gcm.Seal(nonce, nonce, texte, nil), nil
+}
+// Utilisez AES-GCM (authentifie) -- jamais AES-CBC
+\end{lstlisting}
+
+\chapter{Optimisation Bas Niveau}
+
+\section{Le cycle d'optimisation}
+
+\begin{center}
+\begin{tikzpicture}[
+  etape/.style={draw=GoBlue,fill=GoLight,rounded corners=4pt,
+    minimum width=2.5cm,minimum height=0.7cm,font=\small\bfseries},
+  arr/.style={->,>=Stealth,thick,color=GoBlue}]
+\node[etape](m)  at (0,0)     {1. Mesurer};
+\node[etape](id) at (3.5,0)   {2. Identifier};
+\node[etape](c)  at (7,0)     {3. Comprendre};
+\node[etape](o)  at (7,-1.8)  {4. Optimiser};
+\node[etape](r)  at (3.5,-1.8){5. Re-mesurer};
+\node[etape](rc) at (0,-1.8)  {6. Recommencer};
+\draw[arr](m)--(id);\draw[arr](id)--(c);\draw[arr](c)--(o);
+\draw[arr](o)--(r);\draw[arr](r)--(rc);
+\draw[arr](rc) to[bend right=20] (m);
+\end{tikzpicture}
+\end{center}
+
+\begin{boiteConseil}
+\code{go test -bench=. -benchmem} mesure le temps ET les allocations.
+La plupart des problemes de performance viennent des \textbf{allocations
+memoire excessives}, pas du CPU. Mesurez avant d'optimiser.
+\end{boiteConseil}
+
+\begin{lstlisting}[style=goStyle]
+// Pre-allouer : une seule allocation au lieu de N
+donnees := make([]int, 0, n)
+
+// sync.Pool : reutiliser des objets couteux
+var pool = sync.Pool{
+    New: func() any { return make([]byte, 0, 4096) },
+}
+buf := pool.Get().([]byte)
+defer pool.Put(buf[:0])  // Remettre dans le pool propre
+\end{lstlisting}
+
+% ============================================================
+%  ANNEXES
+% ============================================================
+\appendix
+
+\chapter{Reference rapide}
+
+\section{Outils de concurrence}
+
+\begin{center}
+\tableauStyle
+\begin{tabularx}{\textwidth}{L >{\ttfamily\bfseries\color{GoBlue}}l}
+\toprule
+\rowcolor{GoDark}
+\color{white}Besoin & \color{white}Outil \\
+\midrule
+Lancer une tache en arriere-plan   & go maFonction() \\
+Passer des donnees entre goroutines & chan \\
+Attendre plusieurs goroutines      & sync.WaitGroup \\
+Proteger un etat partage           & sync.Mutex \\
+Map thread-safe                    & sync.Map \\
+Propager annulation / timeout      & context.Context \\
+Attendre le premier channel pret   & select \\
+Detecter les race conditions       & go run -race \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Toutes les commandes essentielles}
+
+\begin{center}
+\tableauStyle
+\begin{tabularx}{\textwidth}{>{\ttfamily\small}l L}
+\toprule
+\rowcolor{GoDark}\color{white}Commande & \color{white}Description \\
+\midrule
+go run main.go              & Compiler et executer \\
+go build -o app ./...       & Compiler en binaire \\
+go build -ldflags="-s -w"   & Binaire optimise production \\
+go test ./...               & Tous les tests \\
+go test -race ./...         & Tests + race detector \\
+go test -cover ./...        & Tests + couverture \\
+go test -bench=. -benchmem  & Benchmarks avec memoire \\
+go fmt ./...                & Formatter le code \\
+go vet ./...                & Analyser les erreurs \\
+go mod tidy                 & Nettoyer les dependances \\
+CGO\_ENABLED=0 go build     & Binaire statique \\
+GOOS=linux go build         & Cross-compilation Linux \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================
+%  FIN
+% ============================================================
+\backmatter
+
+\chapter*{A propos de l'auteur}
+\addcontentsline{toc}{chapter}{A propos de l'auteur}
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[GoBlue](0,0) circle (1.2cm);
+  \fill[GoDark](0,0) circle (0.78cm);
+  \node[text=GoLight,font=\bfseries\Large] at (0,0) {AK};
+\end{tikzpicture}
+
+\vspace{5mm}
+{\Large\bfseries\color{GoDark}Axel Konan}\\[2mm]
+{\color{GoGrey}Architecte Logiciel
+  $\cdot$ Formateur
+  $\cdot$ Vulgarisateur Technique}\\[6mm]
+
+\begin{tabular}{rl}
+  \textbf{GitHub}    &
+    \href{https://github.com/votre-pseudo}{github.com/votre-pseudo} \\
+  \textbf{Formation} &
+    \href{https://github.com/votre-pseudo/formation-go}%
+         {github.com/votre-pseudo/formation-go} \\
+  \textbf{Licence}   & Creative Commons CC BY-NC-SA 4.0 \\
+\end{tabular}
+
+\vspace{6mm}
+\begin{minipage}{0.82\textwidth}
+\centering\small\color{GoGrey}
+Specialiste des systemes distribues et du Cloud Native,
+Axel accompagne des equipes d'ingenieurs avec une approche
+pragmatique~: partir du probleme reel avant d'introduire la theorie.
+Son objectif~: rendre l'ingenierie de haut niveau accessible a tous.
+\end{minipage}
+\end{center}
+
+\end{document}
