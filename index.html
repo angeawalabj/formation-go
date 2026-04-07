@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axel Konan — Formation Go : Pourquoi ? Pour Quoi Faire ?</title>
+  <meta name="description" content="Formation Go complète et gratuite — 5 modules, 2 projets fil rouge, de la philosophie du langage à l'architecture de systèmes distribués. Par Axel Konan, architecte logiciel." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Tokens ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --go-blue:     #00ACD7;
+      --go-dark:     #0D1B2A;
+      --go-accent:   #FF6D00;
+      --go-light:    #E8F7FB;
+      --go-grey:     #546E7A;
+      --go-lg:       #F4F7FB;
+      --go-cyan:     #00E5FF;
+      --white:       #FFFFFF;
+      --ink:         #1A1A2E;
+
+      --ff-head:     'Fraunces', Georgia, serif;
+      --ff-body:     'Space Grotesk', system-ui, sans-serif;
+      --ff-mono:     'JetBrains Mono', 'Fira Code', monospace;
+
+      --max-w:       1200px;
+      --r:           8px;
+      --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--go-dark);
+      color: var(--white);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ─── Navigation ──────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(13, 27, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 172, 215, 0.15);
+    }
+
+    .nav-logo {
+      font-family: var(--ff-mono);
+      font-size: 1rem;
+      color: var(--go-blue);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-logo span { color: var(--go-accent); }
+
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover { color: var(--go-blue); }
+
+    .nav-cta {
+      background: var(--go-blue);
+      color: var(--go-dark) !important;
+      font-weight: 600;
+      padding: 0.45rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.85rem !important;
+      transition: all var(--transition) !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--go-cyan) !important;
+      color: var(--go-dark) !important;
+      transform: translateY(-1px);
+    }
+
+    /* ─── Hero ────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 6rem 2rem 4rem;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%,
+          rgba(0, 172, 215, 0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 85% 50%,
+          rgba(255, 109, 0, 0.08) 0%, transparent 65%),
+        var(--go-dark);
+    }
+
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,172,215,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,172,215,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: var(--max-w);
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(0, 172, 215, 0.12);
+      border: 1px solid rgba(0, 172, 215, 0.3);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-size: 0.8rem;
+      color: var(--go-blue);
+      font-family: var(--ff-mono);
+      margin-bottom: 1.5rem;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--go-blue);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-family: var(--ff-head);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      animation: fadeDown 0.6s 0.1s ease both;
+    }
+
+    .hero-title .accent { color: var(--go-blue); }
+    .hero-title .accent2 { color: var(--go-accent); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      animation: fadeDown 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      animation: fadeDown 0.6s 0.3s ease both;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 1.8rem;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--go-blue);
+      color: var(--go-dark);
+    }
+
+    .btn-primary:hover {
+      background: var(--go-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 172, 215, 0.35);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--go-blue);
+      color: var(--go-blue);
+      transform: translateY(-2px);
+    }
+
+    .btn-accent {
+      background: var(--go-accent);
+      color: var(--white);
+    }
+
+    .btn-accent:hover {
+      background: #FF8C00;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 109, 0, 0.35);
+    }
+
+    /* ─── Terminal mockup ────────────────────────────── */
+    .hero-terminal {
+      animation: fadeLeft 0.7s 0.2s ease both;
+    }
+
+    .terminal {
+      background: #0D1117;
+      border: 1px solid rgba(0, 172, 215, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 24px 48px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .terminal-bar {
+      background: #161B22;
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FFBD2E; }
+    .dot-g { background: #28C840; }
+
+    .terminal-title {
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+      margin-left: 0.5rem;
+    }
+
+    .terminal-body {
+      padding: 1.25rem 1.5rem;
+      font-family: var(--ff-mono);
+      font-size: 0.82rem;
+      line-height: 1.85;
+    }
+
+    .t-comment { color: #6E7781; }
+    .t-cmd     { color: #79C0FF; }
+    .t-out     { color: #56D364; }
+    .t-err     { color: #FF6D00; }
+    .t-dim     { color: rgba(255,255,255,0.35); }
+    .t-prompt  { color: var(--go-blue); user-select: none; }
+
+    /* Typing cursor */
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--go-blue);
+      margin-left: 2px;
+      animation: blink 1.1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ─── Stats band ─────────────────────────────────── */
+    .stats-band {
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem;
+    }
+
+    .stats-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--ff-head);
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--go-blue);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Sections communes ───────────────────────────── */
+    section { padding: 5rem 2rem; }
+
+    .section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      color: var(--go-accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--ff-head);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.6);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    /* ─── Modules grid ───────────────────────────────── */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .module-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-color, var(--go-blue));
+      transition: height var(--transition);
+    }
+
+    .module-card:hover {
+      border-color: rgba(0, 172, 215, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+
+    .module-card:hover::before { height: 4px; }
+
+    .module-number {
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      color: var(--card-color, var(--go-blue));
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .module-title {
+      font-family: var(--ff-head);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--white);
+    }
+
+    .module-sub {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .module-desc {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .module-tags {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+    }
+
+    .tag {
+      font-family: var(--ff-mono);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .module-bonus {
+      --card-color: #78909C;
+    }
+
+    /* ─── Projets section ────────────────────────────── */
+    .projets-section {
+      background: rgba(0, 172, 215, 0.04);
+      border-top: 1px solid rgba(0, 172, 215, 0.1);
+      border-bottom: 1px solid rgba(0, 172, 215, 0.1);
+    }
+
+    .projets-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .projet-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+
+    .projet-card:hover {
+      border-color: var(--go-accent);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(255, 109, 0, 0.15);
+    }
+
+    .projet-card-accent {
+      position: absolute;
+      top: 0; right: 0;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(255,109,0,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    }
+
+    .projet-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .projet-name {
+      font-family: var(--ff-mono);
+      font-size: 1.2rem;
+      color: var(--go-accent);
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .projet-tagline {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 1rem;
+    }
+
+    .projet-desc {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+    }
+
+    .projet-features {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 0.4rem;
+    }
+
+    .projet-features li {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      padding-left: 1.2rem;
+      position: relative;
+    }
+
+    .projet-features li::before {
+      content: '→';
+      position: absolute; left: 0;
+      color: var(--go-accent);
+    }
+
+    /* ─── Auteur section ─────────────────────────────── */
+    .auteur-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .auteur-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 3rem;
+      align-items: start;
+      margin-top: 3rem;
+    }
+
+    .auteur-avatar {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--go-blue), var(--go-dark));
+      display: flex; align-items: center; justify-content: center;
+      border: 3px solid rgba(0, 172, 215, 0.3);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .auteur-avatar::after {
+      content: '';
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 172, 215, 0.15);
+    }
+
+    .auteur-initials {
+      font-family: var(--ff-head);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .auteur-name {
+      font-family: var(--ff-head);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .auteur-role {
+      font-size: 0.9rem;
+      color: var(--go-blue);
+      margin-bottom: 1.25rem;
+      font-family: var(--ff-mono);
+    }
+
+    .auteur-bio {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+      max-width: 640px;
+    }
+
+    .auteur-competences {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .competence {
+      background: rgba(0, 172, 215, 0.1);
+      border: 1px solid rgba(0, 172, 215, 0.25);
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--go-blue);
+    }
+
+    .auteur-links {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+
+    /* ─── Download section ───────────────────────────── */
+    .download-section {
+      text-align: center;
+    }
+
+    .download-card {
+      background: linear-gradient(
+        135deg,
+        rgba(0, 172, 215, 0.08) 0%,
+        rgba(13, 27, 42, 0.5) 50%,
+        rgba(255, 109, 0, 0.06) 100%);
+      border: 1px solid rgba(0, 172, 215, 0.2);
+      border-radius: 20px;
+      padding: 3.5rem 2rem;
+      max-width: 680px;
+      margin: 3rem auto 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(0, 172, 215, 0.04) 0%,
+        transparent 60%);
+    }
+
+    .download-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .download-title {
+      font-family: var(--ff-head);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .download-desc {
+      color: rgba(255,255,255,0.6);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      line-height: 1.65;
+    }
+
+    .download-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .download-meta {
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.35);
+      font-family: var(--ff-mono);
+    }
+
+    /* ─── Footer ─────────────────────────────────────── */
+    footer {
+      background: #070E16;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: var(--ff-mono);
+      font-size: 1.1rem;
+      color: var(--go-blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-logo span { color: var(--go-accent); }
+
+    .footer-links {
+      display: flex; justify-content: center; gap: 2rem;
+      list-style: none;
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .footer-links a:hover { color: var(--go-blue); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* ─── Animations ─────────────────────────────────── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeLeft {
+      from { opacity: 0; transform: translateX(24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-terminal { order: -1; }
+      .projets-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .auteur-grid { grid-template-columns: 1fr; }
+      .auteur-avatar { width: 120px; height: 120px; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      section { padding: 3.5rem 1.25rem; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+      .stat-num { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Navigation ─────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" href="#">go<span>watch</span>.dev</a>
+  <ul class="nav-links">
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#projets">Projets</a></li>
+    <li><a href="#auteur">Auteur</a></li>
+    <li><a href="#download" class="nav-cta">Télécharger</a></li>
+  </ul>
+</nav>
+
+<!-- ─── Hero ───────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge">Open Source · Gratuit · En Français</div>
+
+      <h1 class="hero-title">
+        Apprendre <span class="accent">Go</span> :<br>
+        Mais <span class="accent2">Pourquoi ?</span><br>
+        Et Pour Quoi Faire&nbsp;?
+      </h1>
+
+      <p class="hero-sub">
+        La formation Go francophone qui commence par le problème
+        réel — pas par la syntaxe. De la philosophie du langage
+        à l'architecture de systèmes distribués, en 5 modules progressifs.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://github.com/votre-pseudo/formation-go" target="_blank">
+          ⭐ GitHub — Code source
+        </a>
+        <a class="btn btn-accent" href="#download">
+          📥 Télécharger le PDF
+        </a>
+        <a class="btn btn-secondary" href="#modules">
+          Voir le programme →
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-terminal">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <span class="terminal-title">gowatch — terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-prompt">$</span> <span class="t-cmd">go build -o gowatch .</span></div>
+          <div class="t-dim">&nbsp;</div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">./gowatch --watch --interval 2s</span></div>
+          <div class="t-dim">&nbsp;</div>
+          <div class="t-comment">
+            === gowatch v1.0.0 — Ctrl+C pour arrêter ===
+          </div>
+          <div class="t-dim">&nbsp;</div>
+          <div><span class="t-out">✓</span> CPU Logiques   : <span class="t-out">8</span> cœurs</div>
+          <div><span class="t-out">✓</span> RAM Utilisée   : <span class="t-out">61.2</span> %</div>
+          <div><span class="t-out">✓</span> Goroutines     : <span class="t-out">4</span> actives</div>
+          <div><span class="t-out">✓</span> Latence locale : <span class="t-out">2</span> ms</div>
+          <div><span class="t-out">✓</span> Collecté en    : <span class="t-out">21</span> ms</div>
+          <div class="t-dim">&nbsp;</div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker images gohub</span></div>
+          <div class="t-dim">&nbsp;</div>
+          <div><span class="t-comment">REPOSITORY   TAG     SIZE</span></div>
+          <div><span class="t-out">gohub</span>   <span class="t-dim">latest</span>  <span class="t-err">8.2MB</span></div>
+          <div class="t-dim">&nbsp;</div>
+          <div><span class="t-prompt">$</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Stats ──────────────────────────────────────────── -->
+<div class="stats-band">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">5</div>
+      <div class="stat-label">Modules</div>
+    </div>
+    <div>
+      <div class="stat-num">13</div>
+      <div class="stat-label">Chapitres</div>
+    </div>
+    <div>
+      <div class="stat-num">2</div>
+      <div class="stat-label">Projets fil rouge</div>
+    </div>
+    <div>
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Gratuit</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Modules ────────────────────────────────────────── -->
+<section id="modules">
+  <div class="section-inner">
+    <div class="section-label">// Le programme</div>
+    <h2 class="section-title">5 modules, une progression logique</h2>
+    <p class="section-sub">
+      On ne commence pas par "voici comment déclarer une variable".
+      On commence par la douleur que Go résout — et on introduit
+      la syntaxe uniquement quand elle devient nécessaire.
+    </p>
+
+    <div class="modules-grid">
+
+      <div class="module-card" style="--card-color: #00ACD7">
+        <div class="module-number">// Module 01</div>
+        <div class="module-title">L'Éveil</div>
+        <div class="module-sub">Pourquoi Go existe</div>
+        <div class="module-desc">
+          Créer le choc de simplification. Comprendre pourquoi
+          Google, Docker, Kubernetes et Cloudflare ont choisi Go —
+          et ce que ça change pour vous, concrètement.
+        </div>
+        <div class="module-tags">
+          <span class="tag">Philosophie</span>
+          <span class="tag">Installation</span>
+          <span class="tag">Premier binaire</span>
+        </div>
+      </div>
+
+      <div class="module-card" style="--card-color: #26C6DA">
+        <div class="module-number">// Module 02</div>
+        <div class="module-title">La Forge</div>
+        <div class="module-sub">Les fondamentaux sans s'ennuyer</div>
+        <div class="module-desc">
+          La syntaxe expliquée par les problèmes qu'elle résout.
+          Variables, Slices, Maps, gestion d'erreurs explicite,
+          interfaces — le tout sans boilerplate inutile.
+        </div>
+        <div class="module-tags">
+          <span class="tag">Types</span>
+          <span class="tag">Erreurs</span>
+          <span class="tag">Interfaces</span>
+          <span class="tag">Structs</span>
+        </div>
+      </div>
+
+      <div class="module-card" style="--card-color: #FF6D00">
+        <div class="module-number">// Module 03</div>
+        <div class="module-title">Le Super-Pouvoir</div>
+        <div class="module-sub">La concurrence massive</div>
+        <div class="module-desc">
+          Le module où tout bascule. Goroutines, Channels, WaitGroup,
+          Context — la concurrence en Go n'est pas une fonctionnalité
+          avancée. C'est une fonctionnalité de base.
+        </div>
+        <div class="module-tags">
+          <span class="tag">Goroutines</span>
+          <span class="tag">Channels</span>
+          <span class="tag">Context</span>
+          <span class="tag">select</span>
+        </div>
+      </div>
+
+      <div class="module-card" style="--card-color: #FF8C00">
+        <div class="module-number">// Module 04</div>
+        <div class="module-title">L'Architecte</div>
+        <div class="module-sub">Systèmes sérieux en production</div>
+        <div class="module-desc">
+          API REST sans framework, tests Table-Driven, benchmarks,
+          logs structurés, Docker multi-stage — de la sandbox
+          au service de production en image de 8 Mo.
+        </div>
+        <div class="module-tags">
+          <span class="tag">net/http</span>
+          <span class="tag">Tests</span>
+          <span class="tag">Docker</span>
+          <span class="tag">slog</span>
+        </div>
+      </div>
+
+      <div class="module-card module-bonus" style="--card-color: #78909C">
+        <div class="module-number">// Module 05 ⭐ Bonus</div>
+        <div class="module-title">L'Homme de l'Ombre</div>
+        <div class="module-sub">Outils système avancés</div>
+        <div class="module-desc">
+          Pour aller plus loin : scanner de ports concurrent,
+          tunneling TCP, TLS natif, AES-GCM, profiling pprof,
+          et métriques réelles depuis <code>/proc</code>.
+        </div>
+        <div class="module-tags">
+          <span class="tag">TCP/TLS</span>
+          <span class="tag">Crypto</span>
+          <span class="tag">pprof</span>
+          <span class="tag">/proc</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Projets ────────────────────────────────────────── -->
+<section class="projets-section" id="projets">
+  <div class="section-inner">
+    <div class="section-label">// Les projets fil rouge</div>
+    <h2 class="section-title">Deux vrais outils, construits module par module</h2>
+    <p class="section-sub">
+      Pas des mini-exercices isolés. Deux programmes qui grandissent
+      tout au long de la formation — et qui finissent prêts
+      à être utilisés en production.
+    </p>
+
+    <div class="projets-grid">
+
+      <div class="projet-card">
+        <div class="projet-card-accent"></div>
+        <span class="projet-icon">🖥️</span>
+        <div class="projet-name">gowatch</div>
+        <div class="projet-tagline">Outil CLI de monitoring système</div>
+        <div class="projet-desc">
+          Un binaire unique qui surveille votre machine en temps réel.
+          Du simple affichage du Module 01 jusqu'au daemon concurrent
+          avec scanner réseau du Module 05.
+        </div>
+        <ul class="projet-features">
+          <li>Collecte concurrente : CPU, RAM, goroutines</li>
+          <li>Métriques réelles depuis <code>/proc</code> sur Linux</li>
+          <li>Mode surveillance avec rafraîchissement configurable</li>
+          <li>Scanner de ports TCP concurrent</li>
+          <li>Export HTTPS vers gohub</li>
+          <li>Multi-plateforme : Linux, macOS, Windows, ARM</li>
+        </ul>
+      </div>
+
+      <div class="projet-card">
+        <div class="projet-card-accent"></div>
+        <span class="projet-icon">🌐</span>
+        <div class="projet-name">gohub</div>
+        <div class="projet-tagline">Dashboard API REST</div>
+        <div class="projet-desc">
+          Une API HTTP qui stocke et expose les métriques collectées
+          par gowatch. Testée, dockerisée, prête pour la production
+          en image de 8 Mo.
+        </div>
+        <ul class="projet-features">
+          <li>4 endpoints REST : /health, /metrics, /history, /ingest</li>
+          <li>Store en mémoire thread-safe (sync.RWMutex)</li>
+          <li>Logs structurés JSON avec log/slog</li>
+          <li>Graceful shutdown sur SIGINT/SIGTERM</li>
+          <li>Suite de tests : Table-Driven + httptest + benchmarks</li>
+          <li>Dockerfile multi-stage : image finale de 8 Mo</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Auteur ──────────────────────────────────────────── -->
+<section class="auteur-section" id="auteur">
+  <div class="section-inner">
+    <div class="section-label">// L'auteur</div>
+    <h2 class="section-title">Axel Konan</h2>
+
+    <div class="auteur-grid">
+      <div>
+        <div class="auteur-avatar">
+          <span class="auteur-initials">AK</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="auteur-name">Axel Konan</div>
+        <div class="auteur-role">
+          Architecte Logiciel · Formateur · Vulgarisateur Technique
+        </div>
+
+        <p class="auteur-bio">
+          Spécialiste des systèmes distribués et du Cloud Native,
+          j'accompagne des équipes d'ingénieurs dans la montée en
+          compétences sur des technologies modernes. Mon approche est
+          toujours la même : partir du problème réel avant d'introduire
+          la théorie. Parce qu'une syntaxe sans contexte est une syntaxe
+          qu'on oublie.
+        </p>
+
+        <p class="auteur-bio">
+          Cette formation Go est ma façon de contribuer à l'écosystème
+          francophone de la tech — rendre l'ingénierie de haut niveau
+          accessible à tous, gratuitement, sans compromis sur la qualité.
+        </p>
+
+        <div class="auteur-competences">
+          <span class="competence">Go / Golang</span>
+          <span class="competence">Architecture distribuée</span>
+          <span class="competence">Cloud Native</span>
+          <span class="competence">Kubernetes</span>
+          <span class="competence">DevOps</span>
+          <span class="competence">Vulgarisation technique</span>
+        </div>
+
+        <div class="auteur-links">
+          <a class="btn btn-primary" href="https://github.com/votre-pseudo" target="_blank">
+            GitHub →
+          </a>
+          <a class="btn btn-secondary" href="https://github.com/votre-pseudo/formation-go" target="_blank">
+            Voir la formation →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Download ───────────────────────────────────────── -->
+<section id="download">
+  <div class="section-inner download-section">
+    <div class="section-label">// Accéder à la formation</div>
+    <h2 class="section-title">Tout est gratuit. Tout est open source.</h2>
+
+    <div class="download-card">
+      <span class="download-icon">📘</span>
+      <div class="download-title">Formation complète</div>
+      <div class="download-desc">
+        21 fichiers Markdown sur GitHub · Ebook PDF · Code source complet
+        des deux projets · Makefile, Dockerfile, tests inclus.
+        Rien à payer. Rien à créer un compte.
+      </div>
+
+      <div class="download-actions">
+        <a class="btn btn-primary"
+           href="https://github.com/votre-pseudo/formation-go"
+           target="_blank">
+          ⭐ Voir sur GitHub
+        </a>
+        <a class="btn btn-accent"
+           href="formation-go.pdf"
+           download="formation-go-axel-konan.pdf">
+          📥 Télécharger le PDF
+        </a>
+        <a class="btn btn-secondary"
+           href="https://github.com/votre-pseudo/formation-go/archive/refs/heads/main.zip"
+           target="_blank">
+          🗜️ Archive ZIP
+        </a>
+      </div>
+
+      <div class="download-meta">
+        PDF · 284 Ko · v1.0 · CC BY-NC-SA 4.0 · Axel Konan
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-logo">go<span>formation</span>.dev</div>
+
+  <ul class="footer-links">
+    <li><a href="https://github.com/votre-pseudo/formation-go" target="_blank">GitHub</a></li>
+    <li><a href="#modules">Programme</a></li>
+    <li><a href="#auteur">Auteur</a></li>
+    <li><a href="formation-go.pdf" download>Télécharger</a></li>
+  </ul>
+
+  <p class="footer-copy">
+    © <span id="year"></span> Axel Konan · Licence Creative Commons CC BY-NC-SA 4.0<br>
+    Distribué gratuitement · Code source sur GitHub
+  </p>
+</footer>
+
+<script>
+  // Année dynamique dans le footer
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Animation au scroll (Intersection Observer)
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.module-card, .projet-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+
+  // Compteur animé pour les stats
+  function animateCounter(el, target, duration = 1200) {
+    const start = performance.now();
+    const update = (time) => {
+      const elapsed = time - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(eased * target);
+      el.textContent = current + (el.dataset.suffix || '');
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        document.querySelectorAll('.stat-num').forEach(el => {
+          const raw = el.textContent.trim();
+          const num = parseInt(raw);
+          if (!isNaN(num)) {
+            el.dataset.suffix = raw.includes('%') ? '%' : '';
+            animateCounter(el, num);
+          }
+        });
+        statsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const statsBand = document.querySelector('.stats-band');
+  if (statsBand) statsObserver.observe(statsBand);
+</script>
+
+</body>
+</html>
