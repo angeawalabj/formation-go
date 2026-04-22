@@ -328,7 +328,7 @@ On initialise `gohub` — le second projet fil rouge.
 
 ```bash
 mkdir gohub && cd gohub
-go mod init github.com/votre-pseudo/gohub
+go mod init github.com/angeawalabj/gohub
 ```
 
 **Structure :**
@@ -413,7 +413,7 @@ import (
     "strconv"
     "time"
 
-    "github.com/votre-pseudo/gohub/store"
+    "github.com/angeawalabj/gohub/store"
 )
 
 type Server struct {
@@ -523,8 +523,8 @@ import (
     "runtime"
     "time"
 
-    "github.com/votre-pseudo/gohub/api"
-    "github.com/votre-pseudo/gohub/store"
+    "github.com/angeawalabj/gohub/api"
+    "github.com/angeawalabj/gohub/store"
 )
 
 func main() {

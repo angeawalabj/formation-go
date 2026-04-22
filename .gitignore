@@ -30,3 +30,4 @@ vendor/
 *.pem
 *.crt
 *.key
+scr.sh

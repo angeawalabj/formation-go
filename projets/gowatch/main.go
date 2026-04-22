@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/votre-pseudo/gowatch/collector"
-	"github.com/votre-pseudo/gowatch/exporter"
-	"github.com/votre-pseudo/gowatch/renderer"
-	"github.com/votre-pseudo/gowatch/scanner"
+	"github.com/angeawalabj/gowatch/collector"
+	"github.com/angeawalabj/gowatch/exporter"
+	"github.com/angeawalabj/gowatch/renderer"
+	"github.com/angeawalabj/gowatch/scanner"
 )
 
 // Variables injectées à la compilation via -ldflags

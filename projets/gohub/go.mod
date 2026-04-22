@@ -1,3 +1,3 @@
-module github.com/votre-pseudo/gohub
+module github.com/angeawalabj/gohub
 
 go 1.23

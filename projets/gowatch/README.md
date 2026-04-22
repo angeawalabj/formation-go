@@ -10,7 +10,7 @@ Un binaire unique, concurrent, sans dépendances externes.
 
 ```bash
 # Depuis les sources
-git clone https://github.com/votre-pseudo/formation-go
+git clone https://github.com/angeawalabj/formation-go
 cd formation-go/projets/gowatch
 make build
 

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/votre-pseudo/gowatch/collector"
+	"github.com/angeawalabj/gowatch/collector"
 )
 
 // ExporterHTTPS envoie un snapshot vers l'URL donnée via HTTP POST.

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/votre-pseudo/gowatch/collector"
+	"github.com/angeawalabj/gowatch/collector"
 )
 
 // Renderer définit comment afficher un Snapshot.

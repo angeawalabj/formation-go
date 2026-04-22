@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-gowatch:
+    name: Tests gowatch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: projets/gowatch/go.sum
+
+      - name: Vérifier le formatage
+        working-directory: projets/gowatch
+        run: |
+          if [ "$(gofmt -l . | wc -l)" -gt 0 ]; then
+            echo "Code non formaté :"
+            gofmt -l .
+            exit 1
+          fi
+
+      - name: go vet
+        working-directory: projets/gowatch
+        run: go vet ./...
+
+      - name: Tests avec race detector
+        working-directory: projets/gowatch
+        run: go test -race -cover ./...
+
+      - name: Build
+        working-directory: projets/gowatch
+        run: go build -o /dev/null .
+
+  test-gohub:
+    name: Tests gohub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: projets/gohub/go.sum
+
+      - name: Vérifier le formatage
+        working-directory: projets/gohub
+        run: |
+          if [ "$(gofmt -l . | wc -l)" -gt 0 ]; then
+            echo "Code non formaté :"
+            gofmt -l .
+            exit 1
+          fi
+
+      - name: go vet
+        working-directory: projets/gohub
+        run: go vet ./...
+
+      - name: Tests avec race detector
+        working-directory: projets/gohub
+        run: go test -race -cover ./...
+
+      - name: Build
+        working-directory: projets/gohub
+        run: go build -o /dev/null .
+
+  build-multiplatform:
+    name: Build multi-plateforme
+    runs-on: ubuntu-latest
+    needs: [test-gowatch, test-gohub]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Build gowatch (Linux / macOS / Windows)
+        working-directory: projets/gowatch
+        run: |
+          CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -ldflags="-s -w" -o /dev/null .
+          CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -ldflags="-s -w" -o /dev/null .
+          CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -ldflags="-s -w" -o /dev/null .
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o /dev/null .
+
+      - name: Build gohub (Linux)
+        working-directory: projets/gohub
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o /dev/null .

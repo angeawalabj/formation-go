@@ -13,8 +13,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/votre-pseudo/gohub/api"
-	"github.com/votre-pseudo/gohub/store"
+	"github.com/angeawalabj/gohub/api"
+	"github.com/angeawalabj/gohub/store"
 )
 
 // Variables injectées à la compilation via -ldflags

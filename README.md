@@ -2,6 +2,12 @@
 
 > *"La simplicité est la sophistication suprême."* — Rob Pike, co-créateur de Go
 
+![CI](https://github.com/angeawalabj/formation-go/actions/workflows/ci.yml/badge.svg)
+[![Licence: CC BY-NC-SA 4.0](https://img.shields.io/badge/Licence-CC%20BY--NC--SA%204.0-blue.svg)](./LICENSE)
+![Go Version](https://img.shields.io/badge/Go-1.23+-00ACD7?logo=go&logoColor=white)
+![Modules](https://img.shields.io/badge/Modules-5-FF6D00)
+![Gratuit](https://img.shields.io/badge/100%25-Gratuit-28C840)
+
 ---
 
 ## 📖 À propos de cette formation
@@ -71,12 +77,35 @@ La formation est organisée en **5 modules progressifs**, avec **2 projets fil r
 Plutôt que des mini-exercices isolés, chaque module contribue à construire **deux vrais outils** :
 
 ### 🖥️ Projet A — `gowatch` : Un outil CLI de monitoring système
-Un outil en ligne de commande qui surveille votre machine en temps réel.
-Du simple binaire du Module 01 jusqu'à l'outil réseau sécurisé du Module 05.
+
+```bash
+cd projets/gowatch
+make build
+./gowatch --watch --interval 2s
+```
+
+```
+=== gowatch · 2024-01-15T15:42:01Z ===
+  OS   : linux/amd64
+  Go   : go1.23.0
+
+Métriques :
+  ✓ CPU Logiques      : 8.00 cœurs
+  ✓ Goroutines        : 4.00 actives
+  ✓ CPU Usage         : 12.30 %
+  ✓ RAM Utilisée      : 61.20 %
+```
 
 ### 🌐 Projet B — `gohub` : Un dashboard de monitoring via API REST
-Une API qui expose les métriques collectées, dockerisée, testée, prête à déployer.
-Introduite au Module 04, elle s'appuie sur tout ce qui a été construit avant.
+
+```bash
+cd projets/gohub
+make build
+./gohub
+
+curl http://localhost:8080/health
+# {"status":"ok","version":"1.0.0","uptime":"5m30s"}
+```
 
 ---
 
@@ -102,8 +131,14 @@ formation-go/
 ├── README.md               ← Vous êtes ici
 ├── PREFACE.md              ← Pourquoi cette formation existe
 ├── INTRODUCTION.md         ← Comment utiliser ce contenu efficacement
+├── CONTRIBUTING.md         ← Comment contribuer
+├── CHANGELOG.md            ← Historique des versions
+├── LICENSE                 ← Licence CC BY-NC-SA 4.0
+├── .github/
+│   └── workflows/
+│       └── ci.yml          ← Tests automatiques (CI)
 ├── module-01-eveil/
-│   ├── README.md           ← Vue d'ensemble du module
+│   ├── README.md
 │   ├── 01-syndrome-complexite.md
 │   └── 02-zen-attitude-gopher.md
 ├── module-02-forge/
@@ -126,8 +161,8 @@ formation-go/
 │   ├── 01-reseau-securite.md
 │   └── 02-optimisation-bas-niveau.md
 └── projets/
-    ├── gowatch/            ← Code source du projet CLI
-    └── gohub/              ← Code source du projet API
+    ├── gowatch/            ← Code source complet gowatch
+    └── gohub/              ← Code source complet gohub
 ```
 
 ---
@@ -149,14 +184,21 @@ formation-go/
 
 - Aucune connaissance de Go requise
 - Une expérience minimale dans **n'importe quel** langage de programmation
-- Go installé sur votre machine → [Installation officielle](https://go.dev/dl/)
+- Go 1.23+ installé → [go.dev/dl](https://go.dev/dl/)
 - Un terminal et la curiosité de comprendre comment les choses fonctionnent vraiment
+
+---
+
+## 🤝 Contribuer
+
+Tu as trouvé une erreur, une typo, un exemple qui ne compile pas ?
+→ Lis [CONTRIBUTING.md](./CONTRIBUTING.md) — les contributions sont les bienvenues.
 
 ---
 
 ## 📄 Licence
 
-Ce contenu est partagé sous licence **Creative Commons CC BY-NC-SA 4.0**.
+Ce contenu est partagé sous licence **[Creative Commons CC BY-NC-SA 4.0](./LICENSE)**.
 Vous pouvez le lire, le partager, l'adapter — pas le revendre tel quel.
 
 ---
@@ -165,6 +207,6 @@ Vous pouvez le lire, le partager, l'adapter — pas le revendre tel quel.
 
 **Prêt à changer de paradigme ?**
 
-[👉 Commencer par la Préface](./PREFACE.md)
+[👉 Commencer par la Préface](./PREFACE.md) · [⭐ Star ce dépôt si ça t'a aidé](https://github.com/angeawalabj/formation-go)
 
 </div>

@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/votre-pseudo/gohub/store"
+	"github.com/angeawalabj/gohub/store"
 )
 
 // setupServeur crée un Server de test avec des données initiales.
