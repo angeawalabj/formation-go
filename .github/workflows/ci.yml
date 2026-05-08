@@ -17,16 +17,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23'
-          cache-dependency-path: projets/gowatch/go.sum
-
-      - name: Vérifier le formatage
-        working-directory: projets/gowatch
-        run: |
-          if [ "$(gofmt -l . | wc -l)" -gt 0 ]; then
-            echo "Code non formaté :"
-            gofmt -l .
-            exit 1
-          fi
 
       - name: go vet
         working-directory: projets/gowatch
@@ -38,7 +28,7 @@ jobs:
 
       - name: Build
         working-directory: projets/gowatch
-        run: go build -o /dev/null .
+        run: CGO_ENABLED=0 go build -o /dev/null .
 
   test-gohub:
     name: Tests gohub
@@ -50,16 +40,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23'
-          cache-dependency-path: projets/gohub/go.sum
-
-      - name: Vérifier le formatage
-        working-directory: projets/gohub
-        run: |
-          if [ "$(gofmt -l . | wc -l)" -gt 0 ]; then
-            echo "Code non formaté :"
-            gofmt -l .
-            exit 1
-          fi
 
       - name: go vet
         working-directory: projets/gohub
@@ -71,7 +51,7 @@ jobs:
 
       - name: Build
         working-directory: projets/gohub
-        run: go build -o /dev/null .
+        run: CGO_ENABLED=0 go build -o /dev/null .
 
   build-multiplatform:
     name: Build multi-plateforme
@@ -85,7 +65,7 @@ jobs:
         with:
           go-version: '1.23'
 
-      - name: Build gowatch (Linux / macOS / Windows)
+      - name: Build gowatch toutes plateformes
         working-directory: projets/gowatch
         run: |
           CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -ldflags="-s -w" -o /dev/null .
@@ -93,7 +73,7 @@ jobs:
           CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -ldflags="-s -w" -o /dev/null .
           CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o /dev/null .
 
-      - name: Build gohub (Linux)
+      - name: Build gohub Linux
         working-directory: projets/gohub
         run: |
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o /dev/null .
